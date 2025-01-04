@@ -1,0 +1,15 @@
+{
+    "name": "com.iamai-core.iamai-unity",
+    "version": "0.0.0",
+    "displayName": "iamai-core Unity Plugin",
+    "description": "iamai-core Interface implementation for Unity",
+    "unity": "2020.3",
+    "dependencies": {},
+    "keywords": [
+      "iamai-core"
+    ],
+    "author": {
+      "name": "iamai-core developers",
+      "url": "https://github.com/iamai-core"
+    }
+  }
