@@ -4,7 +4,7 @@ namespace IAMAICore.Unity
 {
     public class IAMAICoreUnity : MonoBehaviour
     {
-        string Generate(string input)
+        public string Generate(string input)
         {
             return input;
         }
