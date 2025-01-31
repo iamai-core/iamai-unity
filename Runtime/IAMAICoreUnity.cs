@@ -62,7 +62,7 @@ namespace iamai_core_lib
             string projectRoot = Path.Combine(exePath);//Path.GetFullPath();
             string dllDirectory = Path.Combine(projectRoot, "Plugins");
             string dllPath = Path.Combine(dllDirectory, DLL_PATH);
-            string modelPath = Path.Combine(projectRoot, "Models", modelName);
+            string modelPath = Path.Combine(projectRoot, "Assets", "Models", modelName);
 
             if (!Directory.Exists(dllDirectory))
             {
