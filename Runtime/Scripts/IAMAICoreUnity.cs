@@ -62,6 +62,7 @@ namespace iamai_core_lib
             string projectRoot = Path.Combine(exePath);
             string dllDirectory = Path.Combine(projectRoot, "Library\\PackageCache\\com.iamai-core.iamai-unity\\Runtime\\DLLs");
             string dllPath = Path.Combine(dllDirectory, DLL_PATH);
+            dllPath = Path.GetFullPath(dllPath);
             string modelPath = Path.Combine(projectRoot, "Assets", "Models", modelName);
 
             if (!Directory.Exists(dllDirectory))
