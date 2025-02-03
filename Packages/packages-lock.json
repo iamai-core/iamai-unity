@@ -1,11 +1,11 @@
 {
   "dependencies": {
-    "com.troiknardimos.iamaicoreunity": {
-      "version": "https://github.com/TroikNardimos/IAMAICoreUnity.git",
+    "com.iamai-core.iamai-unity": {
+      "version": "https://github.com/iamai-core/iamai-unity.git#Plugin",
       "depth": 0,
       "source": "git",
       "dependencies": {},
-      "hash": "d8462af8e23f18a7829566163beaf8a6eab7cbb3"
+      "hash": "6f33c3667006a689a8ed89e21ce82f76406b2626"
     },
     "com.unity.2d.sprite": {
       "version": "1.0.0",
