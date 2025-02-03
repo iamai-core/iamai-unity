@@ -59,8 +59,8 @@ namespace iamai_core_lib
         {
             // Get the current directory and navigate to the DLL location
             string exePath = Directory.GetCurrentDirectory();
-            string projectRoot = Path.Combine(exePath);//Path.GetFullPath();
-            string dllDirectory = Path.Combine(projectRoot, "Packages\\com.iamai-core.iamai-unity\\DLLs");
+            string projectRoot = Path.Combine(exePath);
+            string dllDirectory = Path.Combine(projectRoot, "Library\\PackageCache\\com.iamai-core.iamai-unity\\Runtime\\DLLs");
             string dllPath = Path.Combine(dllDirectory, DLL_PATH);
             string modelPath = Path.Combine(projectRoot, "Assets", "Models", modelName);
 
