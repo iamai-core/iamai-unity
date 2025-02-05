@@ -22,6 +22,7 @@ public class DummyAI : MonoBehaviour
         iamai_core_lib.AI ai = new iamai_core_lib.AI(ModelList[0]);
 
         // Add the AI's response after a delay
+        ai.SetMaxTokens(256);
         StartCoroutine(DelayedAIResponse(ai.Generate(prompt)));
         //chatController.AddMessage(aiResponse, false);
     }
