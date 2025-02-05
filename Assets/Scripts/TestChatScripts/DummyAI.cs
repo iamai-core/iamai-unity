@@ -1,19 +1,29 @@
 using System.Collections;
 using UnityEngine;
 using iamai_core_lib;
+using System.Collections.Generic;
+using System;
+using UnityEditor.Search;
+using UnityEngine.Rendering;
 
 public class DummyAI : MonoBehaviour
 {
     public ChatController chatController;
+    [Tooltip("Enter LLM file name in to section with file type. ex.Llama3B.gguf")]
+    public List<string> ModelList;
 
     public void SimulateAIResponse(string userMessage)
     {
         // Replace this with real AI logic or API call
         //string aiResponse = $"You said: {userMessage}";
-        iamai_core_lib.AI ai = new iamai_core_lib.AI("llama-3.2-1b-instruct-q4_k_m.gguf");
+
+        string prompt = "You are a helpful AI assistant.\n\n User message: " +
+        userMessage;
+
+        iamai_core_lib.AI ai = new iamai_core_lib.AI(ModelList[1]);
 
         // Add the AI's response after a delay
-        StartCoroutine(DelayedAIResponse(ai.Generate(userMessage)));
+        StartCoroutine(DelayedAIResponse(ai.Generate(prompt)));
         //chatController.AddMessage(aiResponse, false);
     }
 

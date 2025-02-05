@@ -1383,6 +1383,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   chatController: {fileID: 774972695}
+  ModelList:
+  - llama-3.2-1b-instruct-q4_k_m.gguf
+  - DeepSeek-R1-Distill-Llama-8B-Q4_K_M.gguf
 --- !u!1 &1183876054
 GameObject:
   m_ObjectHideFlags: 0
