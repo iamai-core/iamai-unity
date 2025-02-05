@@ -17,10 +17,9 @@ public class DummyAI : MonoBehaviour
         // Replace this with real AI logic or API call
         //string aiResponse = $"You said: {userMessage}";
 
-        string prompt = "You are a helpful AI assistant.\n\n User message: " +
-        userMessage;
+        string prompt = "You are a helpful AI assistant that will send back one Response.\n\n Message: " + userMessage + "\nResponse: ";
 
-        iamai_core_lib.AI ai = new iamai_core_lib.AI(ModelList[1]);
+        iamai_core_lib.AI ai = new iamai_core_lib.AI(ModelList[0]);
 
         // Add the AI's response after a delay
         StartCoroutine(DelayedAIResponse(ai.Generate(prompt)));
