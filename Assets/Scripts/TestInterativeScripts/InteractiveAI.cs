@@ -26,7 +26,7 @@ public class InteractiveAI : MonoBehaviour
             alreadySpotted = true;
             GameObject message = Instantiate(messagePrefab, transform.position + Vector3.up * 1.5f, Quaternion.identity);
             message.GetComponent<InteractivePopup>().text.SetText(ai.Generate(
-                "You are a NPC in a video game, and you just saw the player steal your treasure. Respond angrily with as few words as possible."
+                "You are a video game NPC, and a player stole your treasure. Respond angrily with no more than 7-12 words."
                 ));
             Destroy(message, 1.5f);
         }
