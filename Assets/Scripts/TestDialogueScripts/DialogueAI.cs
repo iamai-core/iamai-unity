@@ -1,11 +1,18 @@
 using NUnit.Framework;
 using UnityEngine;
+using iamai_core_lib;
+using System.Collections.Generic;
 
 public class DialogueAI : MonoBehaviour
 {
     public GameObject messagePrefab;
     public Collider2D dialogueZone;
     public BoxCollider2D player;
+
+    [Tooltip("Enter LLM file name in to section with file type. ex.Llama3B.gguf")]
+    public List<string> ModelList;
+
+    private iamai_core_lib.AI ai;
 
     private void Start()
     {
@@ -19,12 +26,8 @@ public class DialogueAI : MonoBehaviour
         if (dialogueZone.IsTouching(player) && Input.GetKeyDown(KeyCode.E))
         {
             GameObject message = Instantiate(messagePrefab, transform.position + Vector3.up * 1.5f, Quaternion.identity);
-            message.GetComponent<InteractivePopup>().text.SetText(Generate("The player is talking to you."));
+            message.GetComponent<InteractivePopup>().text.SetText(ai.Generate("Hello."));
             Destroy(message, 1.5f);
         }
-    }
-    public string Generate(string prompt)
-    {
-        return "Hey, what's up?";
     }
 }

@@ -11,20 +11,24 @@ public class DummyAI : MonoBehaviour
     public ChatController chatController;
     [Tooltip("Enter LLM file name in to section with file type. ex.Llama3B.gguf")]
     public List<string> ModelList;
+    [TextAreaAttribute] public string initialPrompt;
+    private iamai_core_lib.AI ai;
+
+    private void Start()
+    {
+        ai = new iamai_core_lib.AI(ModelList[4]);
+        ai.SetMaxTokens(256);
+        StartCoroutine(DelayedAIResponse(ai.Generate(
+            "You are a helpful AI assistant that will send back one response.\n\n Message: " + initialPrompt + "\nResponse: "
+            )));
+    }
 
     public void SimulateAIResponse(string userMessage)
     {
-        // Replace this with real AI logic or API call
-        //string aiResponse = $"You said: {userMessage}";
-
-        string prompt = "You are a helpful AI assistant that will send back one Response.\n\n Message: " + userMessage + "\nResponse: ";
-
-        iamai_core_lib.AI ai = new iamai_core_lib.AI(ModelList[0]);
-
         // Add the AI's response after a delay
-        ai.SetMaxTokens(256);
-        StartCoroutine(DelayedAIResponse(ai.Generate(prompt)));
-        //chatController.AddMessage(aiResponse, false);
+        StartCoroutine(DelayedAIResponse(ai.Generate(
+            "You are a helpful AI assistant that will send back one response.\n\n Message: " + userMessage + "\nResponse: "
+            )));
     }
 
     private IEnumerator DelayedAIResponse(string aiResponse)
