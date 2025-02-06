@@ -29,7 +29,9 @@ public class DialogueAI : MonoBehaviour
         if (dialogueZone.IsTouching(player) && Input.GetKeyDown(KeyCode.E))
         {
             GameObject message = Instantiate(messagePrefab, transform.position + Vector3.up * 1.5f, Quaternion.identity);
-            message.GetComponent<InteractivePopup>().text.SetText(ai.Generate("Hello."));
+            message.GetComponent<InteractivePopup>().text.SetText(ai.Generate(
+                "You are a video game NPC, and a player is initiating dialogue with you. Respond with no more than 7-12 words."
+                ));
             Destroy(message, 1.5f);
         }
     }
