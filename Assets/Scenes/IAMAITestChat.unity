@@ -1383,7 +1383,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   chatController: {fileID: 774972695}
-  ModelList: []
+  ModelList:
+  - llama-3.2-1b-instruct-q4_k_m.gguf
   initialPrompt: Hello there!
 --- !u!1 &1183876054
 GameObject:

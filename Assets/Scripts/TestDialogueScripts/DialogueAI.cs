@@ -16,6 +16,9 @@ public class DialogueAI : MonoBehaviour
 
     private void Start()
     {
+        ai = new iamai_core_lib.AI(ModelList[0]);
+        ai.SetMaxTokens(256);
+
         GameObject message = Instantiate(messagePrefab, transform.position + Vector3.up * 1.5f, Quaternion.identity);
         message.GetComponent<InteractivePopup>().text.SetText("Come up and press 'E' to talk to me!");
         Destroy(message, 2.0f);
