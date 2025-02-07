@@ -430,12 +430,8 @@ MonoBehaviour:
   messagePrefab: {fileID: 598072808960506534, guid: 562477d32472b084ab7563de9cb6442c, type: 3}
   dialogueZone: {fileID: 1864674829}
   player: {fileID: 2093354653}
-  responses:
-  - Hello!
-  - Hi!
-  - Hey!
-  - How are you?
-  - Yes?
+  ModelList:
+  - llama-3.2-1b-instruct-q4_k_m.gguf
 --- !u!212 &1864674833
 SpriteRenderer:
   m_ObjectHideFlags: 0

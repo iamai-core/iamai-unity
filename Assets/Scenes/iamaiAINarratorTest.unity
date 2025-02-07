@@ -531,6 +531,14 @@ PrefabInstance:
       propertyPath: treasure
       value: 
       objectReference: {fileID: 1305095278}
+    - target: {fileID: 1206506845108155475, guid: 1714ac16ec1301f4b9659fe88d9e2825, type: 3}
+      propertyPath: ModelList.Array.size
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1206506845108155475, guid: 1714ac16ec1301f4b9659fe88d9e2825, type: 3}
+      propertyPath: 'ModelList.Array.data[0]'
+      value: llama-3.2-1b-instruct-q4_k_m.gguf
+      objectReference: {fileID: 0}
     - target: {fileID: 3347033727485831544, guid: 1714ac16ec1301f4b9659fe88d9e2825, type: 3}
       propertyPath: m_LocalPosition.x
       value: -5.86
@@ -610,6 +618,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Treasure: {fileID: 1305095276}
+  ModelList:
+  - llama-3.2-1b-instruct-q4_k_m.gguf
 --- !u!4 &2145140057
 Transform:
   m_ObjectHideFlags: 0

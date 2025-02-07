@@ -1,2 +1,4 @@
 # Auto detect text files and perform LF normalization
 * text=auto
+.gguf filter=lfs diff=lfs merge=lfs -text
+llama-3.2-1b-instruct-q4_k_m.gguf filter=lfs diff=lfs merge=lfs -text
