@@ -16,7 +16,7 @@ public class AINarratorTest : MonoBehaviour
     {
         ai = new iamai_core_lib.AI(ModelList[0]);
         ai.SetMaxTokens(256);
-        print(ai.Generate("You are the narrator and the game just began. To the right of the player is a treasure chest, and to their left is the owner of the chest, whose guard is down. Narrate this."));      
+        print(ai.Generate("You are the narrator and the game just began. The player is a thief. To the right of the player is a treasure chest, and to their left is the owner of the chest, whose guard is down. Narrate this."));      
     }
 
     // Update is called once per frame
@@ -25,7 +25,7 @@ public class AINarratorTest : MonoBehaviour
         if (!Treasure && !stolen)
         {
             stolen = true;
-            print(ai.Generate("The player stole the treasure! Narrate this!"));
+            print(ai.Generate("The player stole the treasure and the owner saw it! Narrate this!"));
         }
     }
 }
