@@ -13,7 +13,7 @@ This plugin offers the abilty to utilize the power of IAMAI within Unity. Some f
 - Nonlinear dialogue for game NPCs.
 - Easy download and implementation.
 
-## Installation
+## Setup and Build the Unity Plugin
 
 1. In Unity, open Window > Package Manager
 2. Click the + button and choose "Add package from git URL"
