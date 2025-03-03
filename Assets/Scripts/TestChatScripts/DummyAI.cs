@@ -3,8 +3,8 @@ using UnityEngine;
 using iamai_core_lib;
 using System.Collections.Generic;
 using System;
-using UnityEditor.Search;
 using UnityEngine.Rendering;
+//using UnityEditor.Search;
 
 public class DummyAI : MonoBehaviour
 {
