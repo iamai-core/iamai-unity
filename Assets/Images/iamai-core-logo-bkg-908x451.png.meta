@@ -173,7 +173,8 @@ TextureImporter:
     secondaryTextures: []
     spriteCustomMetadata:
       entries: []
-    nameFileIdTable: {}
+    nameFileIdTable:
+      iamai-core-logo-bkg-908x451_0: 5246011221212727597
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 
