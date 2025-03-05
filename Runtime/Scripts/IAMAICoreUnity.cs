@@ -59,11 +59,10 @@ namespace iamai_core_lib
         {
             // Get the current directory and navigate to the DLL location
             string exePath = Directory.GetCurrentDirectory();
-            string projectRoot = Path.Combine(exePath);
-            string dllDirectory = Path.Combine(Environment.SpecialFolder.MyDocuments, "iamai", "dlls");
+            string iamaiDir = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
+            string dllDirectory = Path.Combine(iamaiDir, "iamai", "dlls");
             string dllPath = Path.Combine(dllDirectory, DLL_PATH);
-            string modelDir = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
-            string modelPath = Path.Combine(modelDir, "iamai", "models", modelName);
+            string modelPath = Path.Combine(iamaiDir, "iamai", "models", modelName);
 
             if (!Directory.Exists(dllDirectory))
             {
