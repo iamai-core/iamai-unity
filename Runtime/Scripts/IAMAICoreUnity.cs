@@ -67,7 +67,11 @@ namespace iamai_core_lib
             #endif
             string dllPath = Path.Combine(dllDirectory, DLL_PATH);
             string modelDir = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
+            #if UNITY_EDITOR
             string modelPath = Path.Combine(modelDir, "iamai", "models", modelName);
+            #else
+            string modelPath = Path.Combine(projectRoot, Application.dataPath, "Plugins\\x86_64\\models" modelName);
+            #endif
 
             if (!Directory.Exists(dllDirectory))
             {
