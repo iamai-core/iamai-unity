@@ -17,7 +17,7 @@ public class DummyAI : MonoBehaviour
     private void Start()
     {
         ai = new iamai_core_lib.AI(ModelList[0]);
-        ai.SetMaxTokens(256);
+        ai.SetMaxTokens(56);
         StartCoroutine(DelayedAIResponse(ai.Generate(
             "You are a helpful AI assistant that will send back one response.\n\n Message: " + initialPrompt + "\nResponse: "
             )));
