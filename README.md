@@ -8,10 +8,13 @@
 ```bash
 git clone -b ExampleScene https://github.com/iamai-core/iamai-unity.git
 ```
+### 2. Downlad & install Cuda
+```
+https://developer.nvidia.com/cuda-12-6-0-download-archive
+```
 
 ### 2. Open the Project in Unity
-- Launch Unity.
-- Open the cloned project from the **Unity Hub**.
+- Open the root folder of cloned project from the **Unity Hub**.
 
 ### 3. Load the Demo Scene
 - In Unity's **Content Browser**, go to the `Scenes` folder.
@@ -42,7 +45,7 @@ https://github.com/iamai-core/iamai-unity.git#Plugin
 ### 3. Select Platform and Build
 - In the **Platform** section, select **Windows**.
 - Click **Build**.
-- When prompted, select a folder for your build output.
+- When prompted, select/create an empty folder for your build output.
 - Click **Yes** on any confirmation pop-ups.
 
 ## Post-Build Setup
@@ -51,15 +54,28 @@ https://github.com/iamai-core/iamai-unity.git#Plugin
 ```
 [YourBuildFolder] > IAMAI Unity_Data > Plugins > x86_64
 ```
-- Add the following `.dll` files to this folder:
+- Add the following `.dll` files to the `x86_64` folder:
   - `cublas64_12.dll`
   - `cublasLt64_12.dll`
   - `cudart64_12.dll`
+    
+- The dll files can be found in this directory
+```
+[Program Files] > NVIDIA GPU Computing Toolkit > CUDA > v12.6 > bin
+```
 
 ### 2. Add the LLM Model
 - In the same `x86_64` folder:
   - Create a new folder called **`models`**.
   - Add your LLM model file to this folder.
+
+- Example:
+  - Find an LLM model `.gguf` file from `https://huggingface.co/models` like our `llama-3.2-1b-instruct-q4_k_m.gguf`
+  - This is a link to the model we used
+```
+https://huggingface.co/hugging-quants/Llama-3.2-1B-Instruct-Q4_K_M-GGUF/resolve/main/llama-3.2-1b-instruct-q4_k_m.gguf?download=true
+```
+
 
 ### 3. Final Step: Zip the Build Folder
 - Compress the entire build folder into a `.zip` file for distribution.
