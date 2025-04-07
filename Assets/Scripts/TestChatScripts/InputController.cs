@@ -18,7 +18,7 @@ public class InputController : MonoBehaviour
     void AcceptStringInput(string userInput)
     {
         chatController.AddMessage(userInput, true);
-        InputComplete(userInput);
+        //InputComplete(userInput);
     }
 
     void InputComplete(string userInput)
