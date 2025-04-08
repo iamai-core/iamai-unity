@@ -116,7 +116,13 @@ namespace iamai_core_lib
             }
             return Marshal.GetDelegateForFunctionPointer<T>(procAddress);
         }
-
+        
+		public async Task<string> GenerateAsync(string prompt, int maxLength = 4096) {
+			return await Task.Run(() =>
+			{
+				return Generate(prompt, maxLength);
+			});
+		}
         public string Generate(string prompt, int maxLength = 4096)
         {
             StringBuilder output = new StringBuilder(maxLength);
