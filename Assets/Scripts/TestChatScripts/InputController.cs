@@ -13,12 +13,12 @@ public class InputController : MonoBehaviour
     {
         chatController = GetComponent<ChatController>();
         inputField.onEndEdit.AddListener(AcceptStringInput);
-    }
+	}
 
     void AcceptStringInput(string userInput)
     {
         chatController.AddMessage(userInput, true);
-        //InputComplete(userInput);
+        InputComplete(userInput);
     }
 
     void InputComplete(string userInput)

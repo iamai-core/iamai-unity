@@ -1,5 +1,6 @@
 using NUnit.Framework;
 using System.Collections.Generic;
+using System.IO.Compression;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -10,7 +11,7 @@ public class ChatController : MonoBehaviour
     public GameObject userMessagePrefab;
     public GameObject aiMessagePrefab;
 
-    public void AddMessage(string message, bool isUser = false)
+	public void AddMessage(string message, bool isUser = false)
     {
         GameObject messageObject = Instantiate(isUser ? userMessagePrefab : aiMessagePrefab, chatContent);
 

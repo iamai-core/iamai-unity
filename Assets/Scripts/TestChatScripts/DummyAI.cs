@@ -14,27 +14,44 @@ public class DummyAI : MonoBehaviour
     [TextAreaAttribute] public string initialPrompt;
     private iamai_core_lib.AI ai;
 
-    private async void Start()
-    {
-        ai = new iamai_core_lib.AI(ModelList[0]);
-        ai.SetMaxTokens(256);
-        string result = await ai.GenerateAsync(
-            "You are a helpful AI assistant that will send back one response.\n\n Message: " + initialPrompt + "\nResponse: "
-            );
-        DelayedAIResponse(result);
-    }
+	private async void Start() {
+		ai = new iamai_core_lib.AI(ModelList[0]);
+		ai.SetMaxTokens(256);
+		string result = await ai.GenerateAsync(
+			"You are a helpful AI assistant that will send back one response.\n\n Message: " + initialPrompt + "\nResponse: ");
+		StartCoroutine(DelayedAIResponse(result));
 
-    public async void SimulateAIResponse(string userMessage)
-    {
-        // Add the AI's response after a delay
-        string result = await ai.GenerateAsync(
-            "You are a helpful AI assistant that will send back one response.\n\n Message: " + userMessage + "\nResponse: "
-            );
-        DelayedAIResponse(result);
-    }
+	}
 
-    private void DelayedAIResponse(string aiResponse)
-    {
-        chatController.AddMessage(aiResponse, false);
-    }
+	public async void SimulateAIResponse(string userMessage) {
+		// Add the AI's response after a delay
+		string result = await ai.GenerateAsync(
+			"You are a helpful AI assistant that will send back one response.\n\n Message: " + userMessage + "\nResponse: "
+			);
+		StartCoroutine(DelayedAIResponse(result));
+	}
+
+	private IEnumerator DelayedAIResponse(string aiResponse) {
+		yield return new WaitForSeconds(0.0f);
+		chatController.AddMessage(aiResponse, false);
+	}
+//	private void Start() {
+//		ai = new iamai_core_lib.AI(ModelList[0]);
+//		ai.SetMaxTokens(256);
+//		StartCoroutine(DelayedAIResponse(ai.Generate(
+//			"You are a helpful AI assistant that will send back one response.\n\n Message: " + initialPrompt + "\nResponse: "
+//			)));
+//	}
+
+//	public void SimulateAIResponse(string userMessage) {
+//		// Add the AI's response after a delay
+//		StartCoroutine(DelayedAIResponse(ai.Generate(
+//			"You are a helpful AI assistant that will send back one response.\n\n Message: " + userMessage + "\nResponse: "
+//			)));
+//	}
+
+//	private IEnumerator DelayedAIResponse(string aiResponse) {
+//		yield return new WaitForSeconds(0.0f);
+//		chatController.AddMessage(aiResponse, false);
+//	}
 }
