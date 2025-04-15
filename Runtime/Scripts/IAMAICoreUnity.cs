@@ -56,7 +56,7 @@ namespace iamai_core_lib
         private SetBatchSizeDelegate _setBatchSize;
         private FreeDelegate _free;
 
-        public AI(string modelName)
+        public AI(string modelName, int batchSize = 1, int maxTokens = 512, int threads = 1)
         {
             // Get the current directory and navigate to the DLL location
             string exePath = Directory.GetCurrentDirectory();
@@ -99,7 +99,7 @@ namespace iamai_core_lib
             _free = GetDelegate<FreeDelegate>("Free");
 
             // Initialize the model
-            ctx = _init(modelPath);
+            ctx = _init(modelPath, maxTokens, batchSize, threads);
             if (ctx == IntPtr.Zero)
             {
                 throw new InvalidOperationException("Failed to initialize model");
