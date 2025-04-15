@@ -30,7 +30,7 @@ namespace iamai_core_lib
 
         // Function delegate types
         [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
-        private delegate IntPtr InitDelegate([MarshalAs(UnmanagedType.LPStr)] string modelPath);
+		private delegate IntPtr InitDelegate([MarshalAs(UnmanagedType.LPStr)] string modelPath, int maxTokens, int batchSize, int threads);
 
         [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
         private delegate bool GenerateDelegate(IntPtr context, [MarshalAs(UnmanagedType.LPStr)] string prompt,
