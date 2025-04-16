@@ -10,9 +10,12 @@ using static System.Net.Mime.MediaTypeNames;
 namespace iamai_core_lib {
 	public class AI : IDisposable {
 		private IntPtr ctx;
-		private IntPtr dllHandle;
+		private IntPtr whisperCtx;
+		private IntPtr iamaiDllHandle;
+		private IntPtr whisperDllHandle;
 		private bool disposed = false;
-		private const string DLL_PATH = "iamai-core.dll";
+		private const string IAMAI_DLL_PATH = "iamai-core.dll";
+		private const string Whisper_DLL_PATH = "whisper-interface.dll";
 
 		// Win32 API functions
 		[DllImport("kernel32.dll")]
@@ -30,6 +33,7 @@ namespace iamai_core_lib {
 		// Function delegate types
 		[UnmanagedFunctionPointer(CallingConvention.Cdecl)]
 		private delegate IntPtr InitDelegate([MarshalAs(UnmanagedType.LPStr)] string modelPath);
+
 		[UnmanagedFunctionPointer(CallingConvention.Cdecl)]
 		private delegate IntPtr FullInitDelegate([MarshalAs(UnmanagedType.LPStr)] string modelPath, int ctxSize, int maxTokens, int batchSize, int threads);
 
@@ -49,114 +53,146 @@ namespace iamai_core_lib {
 		[UnmanagedFunctionPointer(CallingConvention.Cdecl)]
 		private delegate void FreeDelegate(IntPtr context);
 
+		[UnmanagedFunctionPointer(CallingConvention.Cdecl)]
+		private delegate IntPtr WhisperInitDelegate([MarshalAs(UnmanagedType.LPStr)] string modelPath, int threads);
+
+		[UnmanagedFunctionPointer(CallingConvention.Cdecl)]
+		private delegate void SetLanguageDelegate(IntPtr context, [MarshalAs(UnmanagedType.LPStr)] string language);
+
+		[UnmanagedFunctionPointer(CallingConvention.Cdecl)]
+		private delegate void SetTranslateDelegate(IntPtr context, bool translate);
+
+		[UnmanagedFunctionPointer(CallingConvention.Cdecl)]
+		private delegate void TranscribeDelegate(IntPtr context, IntPtr translate, int samples);
 		// Function delegates
 		private InitDelegate _init;
 		private FullInitDelegate _fullInit;
+		private WhisperInitDelegate _whisperInit;
 		private GenerateDelegate _generate;
 		private SetMaxTokensDelegate _setMaxTokens;
-		private SetThreadsDelegate _setThreads;
-		private SetBatchSizeDelegate _setBatchSize;
+		private SetThreadsDelegate _whisperSetThreads;
 		private FreeDelegate _free;
+		private FreeDelegate _whisperfree;
+		private SetLanguageDelegate _whisperSetLanguage;
+		private SetTranslateDelegate _whisperSetTranslate;
+		private TranscribeDelegate _whisperTranscribe;
+
+		string m_iamaiModel = "";
+		string m_whisperModel = "";
+
+		int m_size = -1;
+		int m_iamaiTokens = 512;
+		int m_iamaiBatch = 8192;
+		int m_iamaiThreads = 1;
+
+		int m_whisperThreads = 1;
 
 		#region Initialize
-		public async AI(string modelName, int ctxSize = 8192, int batchSize = 1, int maxTokens = 512, int threads = 1) {
-			// Get the current directory and navigate to the DLL location
-			string exePath = Directory.GetCurrentDirectory();
-			string projectRoot = Path.Combine(exePath);
-			#if UNITY_EDITOR
-			string dllDirectory = Path.Combine(projectRoot, "Library\\PackageCache\\com.iamai-core.iamai-unity\\Runtime\\DLLs");
-			#else
-			string dllDirectory = Path.Combine(projectRoot, Application.dataPath, "Plugins\\x86_64");
-			#endif
-			string dllPath = Path.Combine(dllDirectory, DLL_PATH);
-			string modelDir = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
-			#if UNITY_EDITOR
-			string modelPath = Path.Combine(modelDir, "iamai", "models", modelName);
-			#else
-			string modelPath = Path.Combine(projectRoot, Application.dataPath, "Plugins\\x86_64\\models", modelName);
-			#endif
-
-			if (!Directory.Exists(dllDirectory)) {
-				throw new DirectoryNotFoundException($"DLL directory not found: {dllDirectory}");
-			}
-
-			Console.WriteLine($"Loading DLL from: {dllPath}");
-			SetDllDirectory(dllDirectory);
-
-			// Load the DLL
-			dllHandle = LoadLibrary(dllPath);
-			if (dllHandle == IntPtr.Zero) {
-				int errorCode = Marshal.GetLastWin32Error();
-				throw new InvalidOperationException($"Failed to load DLL. Error code: {errorCode}");
-			}
-
-			// Get function pointers
-			_init = GetDelegate<InitDelegate>("Init");
-			_fullInit = GetDelegate<FullInitDelegate>("FullInit");
-			_generate = GetDelegate<GenerateDelegate>("Generate");
-			_setMaxTokens = GetDelegate<SetMaxTokensDelegate>("SetMaxTokens");
-			_free = GetDelegate<FreeDelegate>("Free");
-			// Initialize the model
-			await Task.Run(() => {
-				ctx = _fullInit(modelPath, ctxSize, maxTokens, batchSize, threads);
-
-				if (ctx == IntPtr.Zero) {
-					throw new InvalidOperationException("Failed to initialize model");
-				}
-			}
+		public AI(string IamaiModel, string WhisperModel) {
+			m_iamaiModel = IamaiModel;
+			m_whisperModel = WhisperModel;
 		}
 
 		public AI(string modelName) {
-			// Get the current directory and navigate to the DLL location
-			string exePath = Directory.GetCurrentDirectory();
-			string projectRoot = Path.Combine(exePath);
-			#if UNITY_EDITOR
-			string dllDirectory = Path.Combine(projectRoot, "Library\\PackageCache\\com.iamai-core.iamai-unity\\Runtime\\DLLs");
-			#else
-			string dllDirectory = Path.Combine(projectRoot, Application.dataPath, "Plugins\\x86_64");
-			#endif
-			string dllPath = Path.Combine(dllDirectory, DLL_PATH);
-			string modelDir = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
-			#if UNITY_EDITOR
-			string modelPath = Path.Combine(modelDir, "iamai", "models", modelName);
-			#else
-			string modelPath = Path.Combine(projectRoot, Application.dataPath, "Plugins\\x86_64\\models", modelName);
-			#endif
-
-			if (!Directory.Exists(dllDirectory)) {
-				throw new DirectoryNotFoundException($"DLL directory not found: {dllDirectory}");
-			}
-
-			Console.WriteLine($"Loading DLL from: {dllPath}");
-			SetDllDirectory(dllDirectory);
-
-			// Load the DLL
-			dllHandle = LoadLibrary(dllPath);
-			if (dllHandle == IntPtr.Zero) {
-				int errorCode = Marshal.GetLastWin32Error();
-				throw new InvalidOperationException($"Failed to load DLL. Error code: {errorCode}");
-			}
-
-			// Get function pointers
-			_init = GetDelegate<InitDelegate>("Init");
-			_fullInit = GetDelegate<FullInitDelegate>("FullInit");
-			_generate = GetDelegate<GenerateDelegate>("Generate");
-			_setMaxTokens = GetDelegate<SetMaxTokensDelegate>("SetMaxTokens");
-			_free = GetDelegate<FreeDelegate>("Free");
-
-			// Initialize the model
-			await Task.Run(() => {
-				ctx = _init(modelPath);
-				if (ctx == IntPtr.Zero) {
-					throw new InvalidOperationException("Failed to initialize model");
-				}
-			}
+			m_iamaiModel = modelName;
 		}
+
+		public AI(string modelName, int ctxSize = 8192, int batchSize = 1, int maxTokens = 512, int threads = 1) {
+			m_iamaiModel = modelName;
+			m_size = ctxSize;
+			m_iamaiTokens = maxTokens;
+			m_iamaiBatch = batchSize;
+			m_iamaiThreads = threads;
+		}
+
+		public AI(string WhisperModel, int threads) {
+			m_whisperModel = WhisperModel;
+			m_whisperThreads = threads;
+		}
+
+
+
+
+		public async Task Activate() {
+			await Task.Run(() => {
+				// Get the current directory and navigate to the DLL location
+				string exePath = Directory.GetCurrentDirectory();
+				string projectRoot = Path.Combine(exePath);
+#if UNITY_EDITOR
+				string dllDirectory = Path.Combine(projectRoot, "Library\\PackageCache\\com.iamai-core.iamai-unity\\Runtime\\DLLs");
+#else
+				string dllDirectory = Path.Combine(projectRoot, Application.dataPath, "Plugins\\x86_64");
+#endif
+				string iamaiDllPath = Path.Combine(dllDirectory, IAMAI_DLL_PATH);
+				string whisperDllPath = Path.Combine(dllDirectory, Whisper_DLL_PATH);
+				string modelDir = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
+#if UNITY_EDITOR
+				string iamaiModelPath = Path.Combine(modelDir, "iamai", "models", m_iamaiModel);
+				string whisperModelPath = Path.Combine(modelDir, "iamai", "models", m_whisperModel);
+#else
+				string iamaiModelPath = Path.Combine(projectRoot, Application.dataPath, "Plugins\\x86_64\\models", m_iamaiModel);
+				string whisperModelPath = Path.Combine(projectRoot, Application.dataPath, "Plugins\\x86_64\\models", m_whisperModel);
+#endif
+
+				if (!Directory.Exists(dllDirectory)) {
+					throw new DirectoryNotFoundException($"DLL directory not found: {dllDirectory}");
+				}
+
+				Console.WriteLine($"Loading DLL from: {iamaiDllPath}");
+				SetDllDirectory(dllDirectory);
+
+				// Load the DLL
+				iamaiDllHandle = LoadLibrary(iamaiDllPath);
+				whisperDllHandle = LoadLibrary(whisperDllPath);
+				if (iamaiDllHandle == IntPtr.Zero) {
+					int errorCode = Marshal.GetLastWin32Error();
+					throw new InvalidOperationException($"Failed to load DLL. Error code: {errorCode}");
+				}
+
+				if (whisperDllHandle == IntPtr.Zero) {
+					int errorCode = Marshal.GetLastWin32Error();
+					throw new InvalidOperationException($"Failed to load DLL. Error code: {errorCode}");
+				}
+				if (!string.IsNullOrEmpty(m_iamaiModel)) {
+					// Get function pointers
+					_init = GetDelegate<InitDelegate>("Init", iamaiDllHandle);
+					_fullInit = GetDelegate<FullInitDelegate>("FullInit", iamaiDllHandle);
+					_generate = GetDelegate<GenerateDelegate>("Generate", iamaiDllHandle);
+					_setMaxTokens = GetDelegate<SetMaxTokensDelegate>("SetMaxTokens", iamaiDllHandle);
+					_free = GetDelegate<FreeDelegate>("Free", iamaiDllHandle);
+				}
+
+				if (!string.IsNullOrEmpty(m_whisperModel)) {
+					//get whisper function pointers
+					_whisperInit = GetDelegate<WhisperInitDelegate>("Init", whisperDllHandle);
+					_whisperfree = GetDelegate<FreeDelegate>("Free", whisperDllHandle);
+					_whisperSetThreads = GetDelegate<FreeDelegate>("setThreads", whisperDllHandle);
+					_whisperSetLanguage = GetDelegate<FreeDelegate>("setLanguage", whisperDllHandle);
+					_whisperSetTranslate = GetDelegate<FreeDelegate>("setTranslate", whisperDllHandle);
+					_whisperTranscribe = GetDelegate<FreeDelegate>("Transcribe", whisperDllHandle);
+				}
+				// Initialize the model
+				if (!string.IsNullOrEmpty(m_iamaiModel)) {
+					if (m_size > 0) {
+						ctx = _fullInit(iamaiModelPath, m_size, m_iamaiTokens, m_iamaiBatch, m_iamaiThreads);
+					} else {
+						ctx = _init(iamaiModelPath);
+					}
+					if (ctx == IntPtr.Zero) {
+						throw new InvalidOperationException("Failed to initialize model");
+					}
+				}
+				if (!string.IsNullOrEmpty(m_whisperModel)) {
+					ctx = _whisperInit(whisperModelPath, m_whisperThreads);
+				}
+			});
+		}
+
 
 		#endregion
 
 
-		private T GetDelegate<T>(string procName) where T : Delegate {
+		private T GetDelegate<T>(string procName, IntPtr dllHandle) where T : Delegate {
 			IntPtr procAddress = GetProcAddress(dllHandle, procName);
 			if (procAddress == IntPtr.Zero) {
 				int errorCode = Marshal.GetLastWin32Error();
@@ -193,9 +229,9 @@ namespace iamai_core_lib {
 					_free(ctx);
 					ctx = IntPtr.Zero;
 				}
-				if (dllHandle != IntPtr.Zero) {
-					FreeLibrary(dllHandle);
-					dllHandle = IntPtr.Zero;
+				if (iamaiDllHandle != IntPtr.Zero) {
+					FreeLibrary(iamaiDllHandle);
+					iamaiDllHandle = IntPtr.Zero;
 				}
 				disposed = true;
 			}
