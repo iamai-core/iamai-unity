@@ -58,22 +58,23 @@ namespace iamai_core_lib {
 		private SetBatchSizeDelegate _setBatchSize;
 		private FreeDelegate _free;
 
-		public AI(string modelName, int ctxSize = 8192, int batchSize = 1, int maxTokens = 512, int threads = 1) {
+		#region Initialize
+		public async AI(string modelName, int ctxSize = 8192, int batchSize = 1, int maxTokens = 512, int threads = 1) {
 			// Get the current directory and navigate to the DLL location
 			string exePath = Directory.GetCurrentDirectory();
 			string projectRoot = Path.Combine(exePath);
-#if UNITY_EDITOR
+			#if UNITY_EDITOR
 			string dllDirectory = Path.Combine(projectRoot, "Library\\PackageCache\\com.iamai-core.iamai-unity\\Runtime\\DLLs");
-#else
+			#else
 			string dllDirectory = Path.Combine(projectRoot, Application.dataPath, "Plugins\\x86_64");
-#endif
+			#endif
 			string dllPath = Path.Combine(dllDirectory, DLL_PATH);
 			string modelDir = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
-#if UNITY_EDITOR
+			#if UNITY_EDITOR
 			string modelPath = Path.Combine(modelDir, "iamai", "models", modelName);
-#else
+			#else
 			string modelPath = Path.Combine(projectRoot, Application.dataPath, "Plugins\\x86_64\\models", modelName);
-#endif
+			#endif
 
 			if (!Directory.Exists(dllDirectory)) {
 				throw new DirectoryNotFoundException($"DLL directory not found: {dllDirectory}");
@@ -96,27 +97,31 @@ namespace iamai_core_lib {
 			_setMaxTokens = GetDelegate<SetMaxTokensDelegate>("SetMaxTokens");
 			_free = GetDelegate<FreeDelegate>("Free");
 			// Initialize the model
-			ctx = _fullInit(modelPath, ctxSize, maxTokens, batchSize, threads);
-			if (ctx == IntPtr.Zero) {
-				throw new InvalidOperationException("Failed to initialize model");
+			await Task.Run(() => {
+				ctx = _fullInit(modelPath, ctxSize, maxTokens, batchSize, threads);
+
+				if (ctx == IntPtr.Zero) {
+					throw new InvalidOperationException("Failed to initialize model");
+				}
 			}
 		}
+
 		public AI(string modelName) {
 			// Get the current directory and navigate to the DLL location
 			string exePath = Directory.GetCurrentDirectory();
 			string projectRoot = Path.Combine(exePath);
-#if UNITY_EDITOR
+			#if UNITY_EDITOR
 			string dllDirectory = Path.Combine(projectRoot, "Library\\PackageCache\\com.iamai-core.iamai-unity\\Runtime\\DLLs");
-#else
+			#else
 			string dllDirectory = Path.Combine(projectRoot, Application.dataPath, "Plugins\\x86_64");
-#endif
+			#endif
 			string dllPath = Path.Combine(dllDirectory, DLL_PATH);
 			string modelDir = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
-#if UNITY_EDITOR
+			#if UNITY_EDITOR
 			string modelPath = Path.Combine(modelDir, "iamai", "models", modelName);
-#else
+			#else
 			string modelPath = Path.Combine(projectRoot, Application.dataPath, "Plugins\\x86_64\\models", modelName);
-#endif
+			#endif
 
 			if (!Directory.Exists(dllDirectory)) {
 				throw new DirectoryNotFoundException($"DLL directory not found: {dllDirectory}");
@@ -140,11 +145,16 @@ namespace iamai_core_lib {
 			_free = GetDelegate<FreeDelegate>("Free");
 
 			// Initialize the model
-			ctx = _init(modelPath);
-			if (ctx == IntPtr.Zero) {
-				throw new InvalidOperationException("Failed to initialize model");
+			await Task.Run(() => {
+				ctx = _init(modelPath);
+				if (ctx == IntPtr.Zero) {
+					throw new InvalidOperationException("Failed to initialize model");
+				}
 			}
 		}
+
+		#endregion
+
 
 		private T GetDelegate<T>(string procName) where T : Delegate {
 			IntPtr procAddress = GetProcAddress(dllHandle, procName);
@@ -161,6 +171,7 @@ namespace iamai_core_lib {
 				return Generate(prompt, maxLength);
 			});
 		}
+
 		public string Generate(string prompt, int maxLength = 4096) {
 			StringBuilder output = new StringBuilder(maxLength);
 			bool success = _generate(ctx, prompt, output, maxLength);
@@ -174,14 +185,6 @@ namespace iamai_core_lib {
 
 		public void SetMaxTokens(int maxTokens) {
 			_setMaxTokens(ctx, maxTokens);
-		}
-
-		public void SetThreads(int nThreads) {
-			_setThreads(ctx, nThreads);
-		}
-
-		public void SetBatchSize(int batchSize) {
-			_setBatchSize(ctx, batchSize);
 		}
 
 		protected virtual void Dispose(bool disposing) {
