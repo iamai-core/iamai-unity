@@ -166,10 +166,10 @@ namespace iamai_core_lib {
 					//get whisper function pointers
 					_whisperInit = GetDelegate<WhisperInitDelegate>("Init", whisperDllHandle);
 					_whisperfree = GetDelegate<FreeDelegate>("Free", whisperDllHandle);
-					_whisperSetThreads = GetDelegate<FreeDelegate>("setThreads", whisperDllHandle);
-					_whisperSetLanguage = GetDelegate<FreeDelegate>("setLanguage", whisperDllHandle);
-					_whisperSetTranslate = GetDelegate<FreeDelegate>("setTranslate", whisperDllHandle);
-					_whisperTranscribe = GetDelegate<FreeDelegate>("Transcribe", whisperDllHandle);
+					_whisperSetThreads = GetDelegate<SetThreadsDelegate>("setThreads", whisperDllHandle);
+					_whisperSetLanguage = GetDelegate<SetLanguageDelegate>("setLanguage", whisperDllHandle);
+					_whisperSetTranslate = GetDelegate<SetTranslateDelegate>("setTranslate", whisperDllHandle);
+					_whisperTranscribe = GetDelegate<TranscribeDelegate>("Transcribe", whisperDllHandle);
 				}
 				// Initialize the model
 				if (!string.IsNullOrEmpty(m_iamaiModel)) {
