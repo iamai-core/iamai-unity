@@ -14,22 +14,22 @@ public class DialogueAI : MonoBehaviour
 
     private iamai_core_lib.AI ai;
 
-    private void Start()
+    private async void Start()
     {
         ai = new iamai_core_lib.AI(ModelList[0]);
-        ai.SetMaxTokens(256);
+        await ai.Activate();
 
         GameObject message = Instantiate(messagePrefab, transform.position + Vector3.up * 1.5f, Quaternion.identity);
         message.GetComponent<InteractivePopup>().text.SetText("Come up and press 'E' to talk to me!");
         Destroy(message, 2.0f);
     }
 
-    private void Update()
+    private async void Update()
     {
         if (dialogueZone.IsTouching(player) && Input.GetKeyDown(KeyCode.E))
         {
             GameObject message = Instantiate(messagePrefab, transform.position + Vector3.up * 1.5f, Quaternion.identity);
-            message.GetComponent<InteractivePopup>().text.SetText(ai.Generate(
+            message.GetComponent<InteractivePopup>().text.SetText(await ai.GenerateAsync(
                 "You are a video game NPC, and a player is initiating dialogue with you. Respond with no more than 7-12 words."
                 ));
             Destroy(message, 1.5f);

@@ -1,5 +1,6 @@
 using System.CodeDom.Compiler;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using UnityEngine;
 
 public class InteractiveAI : MonoBehaviour
@@ -13,19 +14,19 @@ public class InteractiveAI : MonoBehaviour
 
     private iamai_core_lib.AI ai;
 
-    private void Start()
+    private async void Start()
     {
         ai = new iamai_core_lib.AI(ModelList[0]);
-        ai.SetMaxTokens(256);
+        await ai.Activate();
     }
 
-    private void Update()
+    private async void Update()
     {
         if (!treasure && !alreadySpotted)
         {
             alreadySpotted = true;
             GameObject message = Instantiate(messagePrefab, transform.position + Vector3.up * 1.5f, Quaternion.identity);
-            message.GetComponent<InteractivePopup>().text.SetText(ai.Generate(
+            message.GetComponent<InteractivePopup>().text.SetText(await ai.GenerateAsync(
                 "You are a video game NPC, and a player stole your treasure. Respond angrily with no more than 7-12 words."
                 ));
             Destroy(message, 1.5f);
