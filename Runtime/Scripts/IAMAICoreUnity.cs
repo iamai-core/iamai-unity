@@ -4,7 +4,6 @@ using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
 using UnityEngine;
-using static System.Net.Mime.MediaTypeNames;
 
 
 namespace iamai_core_lib {
