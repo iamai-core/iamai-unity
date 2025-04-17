@@ -5,7 +5,6 @@ using System.Text;
 using System.Threading.Tasks;
 using UnityEngine;
 
-
 namespace iamai_core_lib {
 	public class AI : IDisposable {
 		private IntPtr ctx;
@@ -196,6 +195,7 @@ namespace iamai_core_lib {
 
 		#endregion
 
+		#region llama functions
 		public async Task<string> GenerateAsync(string prompt, int maxLength = 4096) {
 			return await Task.Run(() => {
 				return Generate(prompt, maxLength);
@@ -218,7 +218,16 @@ namespace iamai_core_lib {
 		public void SetMaxTokens(int maxTokens) {
 			_setMaxTokens(ctx, maxTokens);
 		}
+		#endregion
 
+		#region whisper functions 
+			//this region is for Whisper AI/Transcribe audio files
+			//set threads
+			//set language
+			//set translate
+			//transcribe
+			// some way to get audio based on iamaivoiceinput files
+		#endregion
 		protected virtual void Dispose(bool disposing) {
 			if (!disposed) {
 				if (ctx != IntPtr.Zero) {
