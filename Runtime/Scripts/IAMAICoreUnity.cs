@@ -109,9 +109,6 @@ namespace iamai_core_lib {
 			m_whisperThreads = threads;
 		}
 
-
-
-
 		public async Task Activate() {
 			await Task.Run(() => {
 				// Get the current directory and navigate to the DLL location
@@ -187,10 +184,6 @@ namespace iamai_core_lib {
 			});
 		}
 
-
-		#endregion
-
-
 		private T GetDelegate<T>(string procName, IntPtr dllHandle) where T : Delegate {
 			IntPtr procAddress = GetProcAddress(dllHandle, procName);
 			if (procAddress == IntPtr.Zero) {
@@ -200,6 +193,8 @@ namespace iamai_core_lib {
 			}
 			return Marshal.GetDelegateForFunctionPointer<T>(procAddress);
 		}
+
+		#endregion
 
 		public async Task<string> GenerateAsync(string prompt, int maxLength = 4096) {
 			return await Task.Run(() => {
@@ -248,18 +243,4 @@ namespace iamai_core_lib {
 		}
 	}
 
-	class Program {
-		static void Main(string[] args) {
-			try {
-				using (var ai = new AI(@"Llama-3.2-1B-Instruct-Q4_K_M.gguf")) {
-					ai.SetMaxTokens(256);
-					string response = ai.Generate("Tell me a story about a robot.");
-					Console.WriteLine(response);
-				}
-			} catch (Exception ex) {
-				Console.WriteLine($"Error: {ex.Message}");
-				Console.WriteLine($"Stack trace: {ex.StackTrace}");
-			}
-		}
-	}
 }
