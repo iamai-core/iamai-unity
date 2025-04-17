@@ -117,21 +117,21 @@ namespace iamai_core_lib {
 				// Get the current directory and navigate to the DLL location
 				string exePath = Directory.GetCurrentDirectory();
 				string projectRoot = Path.Combine(exePath);
-#if UNITY_EDITOR
+				#if UNITY_EDITOR
 				string dllDirectory = Path.Combine(projectRoot, "Library\\PackageCache\\com.iamai-core.iamai-unity\\Runtime\\DLLs");
-#else
+				#else
 				string dllDirectory = Path.Combine(projectRoot, Application.dataPath, "Plugins\\x86_64");
-#endif
+				#endif
 				string iamaiDllPath = Path.Combine(dllDirectory, IAMAI_DLL_PATH);
 				string whisperDllPath = Path.Combine(dllDirectory, Whisper_DLL_PATH);
 				string modelDir = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
-#if UNITY_EDITOR
+				#if UNITY_EDITOR
 				string iamaiModelPath = Path.Combine(modelDir, "iamai", "models", m_iamaiModel);
 				string whisperModelPath = Path.Combine(modelDir, "iamai", "models", m_whisperModel);
-#else
+				#else
 				string iamaiModelPath = Path.Combine(projectRoot, Application.dataPath, "Plugins\\x86_64\\models", m_iamaiModel);
 				string whisperModelPath = Path.Combine(projectRoot, Application.dataPath, "Plugins\\x86_64\\models", m_whisperModel);
-#endif
+				#endif
 
 				if (!Directory.Exists(dllDirectory)) {
 					throw new DirectoryNotFoundException($"DLL directory not found: {dllDirectory}");
@@ -208,6 +208,8 @@ namespace iamai_core_lib {
 		}
 
 		public string Generate(string prompt, int maxLength = 4096) {
+			if (ctx == IntPtr.Zero) throw new InvalidOperationException("AI context not initialized.");
+    		if (string.IsNullOrEmpty(prompt)) throw new ArgumentNullException(nameof(prompt));
 			StringBuilder output = new StringBuilder(maxLength);
 			bool success = _generate(ctx, prompt, output, maxLength);
 
