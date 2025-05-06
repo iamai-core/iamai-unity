@@ -47,7 +47,7 @@ namespace iamai_core_lib {
 
 		[UnmanagedFunctionPointer(CallingConvention.Cdecl)]
 		private delegate void ClearPromptFormatDelegate();
-		
+
 		[UnmanagedFunctionPointer(CallingConvention.Cdecl)]
 		private delegate void SetThreadsDelegate(IntPtr context, int nThreads);
 
@@ -243,10 +243,6 @@ namespace iamai_core_lib {
 
 		public void clearPromptFormat(){
 			_clearPrompt();
-		}
-
-		public void formatNewPrompt(string input, string output) {
-			_formatNewPrompt(input, output);
 		}
 		#endregion
 
