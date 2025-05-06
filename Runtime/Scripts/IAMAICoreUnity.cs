@@ -33,7 +33,7 @@ namespace iamai_core_lib {
 		private delegate IntPtr InitDelegate([MarshalAs(UnmanagedType.LPStr)] string modelPath);
 
 		[UnmanagedFunctionPointer(CallingConvention.Cdecl)]
-		private delegate IntPtr FullInitDelegate([MarshalAs(UnmanagedType.LPStr)] string modelPath, int ctxSize, int maxTokens, int batchSize, int threads);
+		private delegate IntPtr FullInitDelegate([MarshalAs(UnmanagedType.LPStr)] string modelPath, int ctxSize, int maxTokens, int batchSize, int threads, int top_k, float top_p, float temperature, uint32_t seed);
 
 		[UnmanagedFunctionPointer(CallingConvention.Cdecl)]
 		private delegate bool GenerateDelegate(IntPtr context, [MarshalAs(UnmanagedType.LPStr)] string prompt,
@@ -41,6 +41,15 @@ namespace iamai_core_lib {
 
 		[UnmanagedFunctionPointer(CallingConvention.Cdecl)]
 		private delegate void SetMaxTokensDelegate(IntPtr context, int maxTokens);
+
+		[UnmanagedFunctionPointer(CallingConvention.Cdecl)]
+		private delegate void SetPromptFormatDelegate([MarshalAs(UnmanagedType.LPStr)] string promptFormat);
+
+		[UnmanagedFunctionPointer(CallingConvention.Cdecl)]
+		private delegate void ClearPromptFormatDelegate();
+
+		[UnmanagedFunctionPointer(CallingConvention.Cdecl)]
+		private delegate void FormatNewPromptDelegate([MarshalAs(UnmanagedType.LPStr)] string input, [MarshalAs(UnmanagedType.LPStr)] string output);
 
 		[UnmanagedFunctionPointer(CallingConvention.Cdecl)]
 		private delegate void SetThreadsDelegate(IntPtr context, int nThreads);
@@ -69,6 +78,9 @@ namespace iamai_core_lib {
 		private GenerateDelegate _generate;
 		private SetMaxTokensDelegate _setMaxTokens;
 		private SetThreadsDelegate _whisperSetThreads;
+		private SetPromptFormatDelegate _setPrompt;
+		private ClearPromptFormatDelegate _clearPrompt;
+		private FormatNewPromptDelegate _formatNewPrompt;
 		private FreeDelegate _free;
 		private FreeDelegate _whisperfree;
 		private SetLanguageDelegate _whisperSetLanguage;
@@ -78,12 +90,15 @@ namespace iamai_core_lib {
 		string m_iamaiModel = "";
 		string m_whisperModel = "";
 
-		int m_size = -1;
+		int m_size = 2048;
 		int m_iamaiTokens = 512;
-		int m_iamaiBatch = 8192;
+		int m_iamaiBatch = 512;
 		int m_iamaiThreads = 1;
+		int m_top_K = 50;
+		int m_top_P = 0.9;
+		int m_Temperature = 0.5;
 
-		int m_whisperThreads = 1;
+		uint32_t m_seed = 4294967295;
 
 		#region Initialize
 		public AI(string IamaiModel, string WhisperModel) {
@@ -95,12 +110,16 @@ namespace iamai_core_lib {
 			m_iamaiModel = modelName;
 		}
 
-		public AI(string modelName, int ctxSize = 8192, int batchSize = 1, int maxTokens = 512, int threads = 1) {
+		public AI(string modelName, int ctxSize = 8192, int batchSize = 1, int maxTokens = 512, int threads = 1, int top_k = 1, int top_p, int temperature, uint32_t seed) {
 			m_iamaiModel = modelName;
 			m_size = ctxSize;
 			m_iamaiTokens = maxTokens;
 			m_iamaiBatch = batchSize;
 			m_iamaiThreads = threads;
+			m_top_K = top_k;
+			m_top_P = top_p;
+			m_Temperature = temperature;
+			m_seed = seed;
 		}
 
 		public AI(string WhisperModel, int threads) {
@@ -155,6 +174,9 @@ namespace iamai_core_lib {
 					_generate = GetDelegate<GenerateDelegate>("Generate", iamaiDllHandle);
 					_setMaxTokens = GetDelegate<SetMaxTokensDelegate>("SetMaxTokens", iamaiDllHandle);
 					_free = GetDelegate<FreeDelegate>("Free", iamaiDllHandle);
+					_setPrompt = GetDelegate<SetPromptFormatDelegate>("setPromptFormat", iamaiDllHandle);
+					_clearPrompt = GetDelegate<ClearPromptFormatDelegate>("clearPromptFormat", iamaiDllHandle);
+					_formatNewPrompt = GetDelegate<FormatNewPromptDelegate>("formatNewPrompt", iamaiDllHandle);
 				}
 
 				if (!string.IsNullOrEmpty(m_whisperModel)) {
@@ -169,7 +191,7 @@ namespace iamai_core_lib {
 				// Initialize the model
 				if (!string.IsNullOrEmpty(m_iamaiModel)) {
 					if (m_size > 0) {
-						ctx = _fullInit(iamaiModelPath, m_size, m_iamaiTokens, m_iamaiBatch, m_iamaiThreads);
+						ctx = _fullInit(iamaiModelPath, m_size, m_iamaiTokens, m_iamaiBatch, m_iamaiThreads, m_top_K, m_top_P, m_Temperature, m_seed);
 					} else {
 						ctx = _init(iamaiModelPath);
 					}
@@ -217,6 +239,18 @@ namespace iamai_core_lib {
 
 		public void SetMaxTokens(int maxTokens) {
 			_setMaxTokens(ctx, maxTokens);
+		}
+
+		public void setPromptFormat(string promptFormat) {
+			_setPrompt(promptFormat);
+		}
+
+		public void clearPromptFormat(){
+			_clearPrompt();
+		}
+
+		public void formatNewPrompt(string input, string output) {
+			_formatNewPrompt(input, output);
 		}
 		#endregion
 
