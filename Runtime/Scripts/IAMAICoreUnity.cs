@@ -47,10 +47,7 @@ namespace iamai_core_lib {
 
 		[UnmanagedFunctionPointer(CallingConvention.Cdecl)]
 		private delegate void ClearPromptFormatDelegate();
-
-		[UnmanagedFunctionPointer(CallingConvention.Cdecl)]
-		private delegate void FormatNewPromptDelegate([MarshalAs(UnmanagedType.LPStr)] string input, [MarshalAs(UnmanagedType.LPStr)] string output);
-
+		
 		[UnmanagedFunctionPointer(CallingConvention.Cdecl)]
 		private delegate void SetThreadsDelegate(IntPtr context, int nThreads);
 
@@ -80,7 +77,6 @@ namespace iamai_core_lib {
 		private SetThreadsDelegate _whisperSetThreads;
 		private SetPromptFormatDelegate _setPrompt;
 		private ClearPromptFormatDelegate _clearPrompt;
-		private FormatNewPromptDelegate _formatNewPrompt;
 		private FreeDelegate _free;
 		private FreeDelegate _whisperfree;
 		private SetLanguageDelegate _whisperSetLanguage;
@@ -177,7 +173,6 @@ namespace iamai_core_lib {
 					_free = GetDelegate<FreeDelegate>("Free", iamaiDllHandle);
 					_setPrompt = GetDelegate<SetPromptFormatDelegate>("setPromptFormat", iamaiDllHandle);
 					_clearPrompt = GetDelegate<ClearPromptFormatDelegate>("clearPromptFormat", iamaiDllHandle);
-					_formatNewPrompt = GetDelegate<FormatNewPromptDelegate>("formatNewPrompt", iamaiDllHandle);
 				}
 
 				if (!string.IsNullOrEmpty(m_whisperModel)) {
