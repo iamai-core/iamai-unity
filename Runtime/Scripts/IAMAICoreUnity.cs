@@ -43,10 +43,10 @@ namespace iamai_core_lib {
 		private delegate void SetMaxTokensDelegate(IntPtr context, int maxTokens);
 
 		[UnmanagedFunctionPointer(CallingConvention.Cdecl)]
-		private delegate void SetPromptFormatDelegate([MarshalAs(UnmanagedType.LPStr)] string promptFormat);
+		private delegate void SetPromptFormatDelegate(IntPtr context, [MarshalAs(UnmanagedType.LPStr)] string format);
 
 		[UnmanagedFunctionPointer(CallingConvention.Cdecl)]
-		private delegate void ClearPromptFormatDelegate();
+		private delegate void ClearPromptFormatDelegate(IntPtr context);
 
 		[UnmanagedFunctionPointer(CallingConvention.Cdecl)]
 		private delegate void SetThreadsDelegate(IntPtr context, int nThreads);
@@ -238,11 +238,11 @@ namespace iamai_core_lib {
 		}
 
 		public void setPromptFormat(string promptFormat) {
-			_setPrompt(promptFormat);
+			_setPrompt(ctx, promptFormat);
 		}
 
 		public void clearPromptFormat(){
-			_clearPrompt();
+			_clearPrompt(ctx);
 		}
 		#endregion
 
