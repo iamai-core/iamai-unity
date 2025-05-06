@@ -171,8 +171,8 @@ namespace iamai_core_lib {
 					_generate = GetDelegate<GenerateDelegate>("Generate", iamaiDllHandle);
 					_setMaxTokens = GetDelegate<SetMaxTokensDelegate>("SetMaxTokens", iamaiDllHandle);
 					_free = GetDelegate<FreeDelegate>("Free", iamaiDllHandle);
-					_setPrompt = GetDelegate<SetPromptFormatDelegate>("setPromptFormat", iamaiDllHandle);
-					_clearPrompt = GetDelegate<ClearPromptFormatDelegate>("clearPromptFormat", iamaiDllHandle);
+					_setPrompt = GetDelegate<SetPromptFormatDelegate>("SetPromptFormat", iamaiDllHandle);
+					_clearPrompt = GetDelegate<ClearPromptFormatDelegate>("ClearPromptFormat", iamaiDllHandle);
 				}
 
 				if (!string.IsNullOrEmpty(m_whisperModel)) {
