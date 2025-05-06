@@ -95,8 +95,8 @@ namespace iamai_core_lib {
 		int m_iamaiBatch = 512;
 		int m_iamaiThreads = 1;
 		int m_top_K = 50;
-		int m_top_P = 0.9;
-		int m_Temperature = 0.5;
+		float m_top_P = 0.9f;
+		float m_Temperature = 0.5f;
 
 		uint32_t m_seed = 4294967295;
 
@@ -110,7 +110,7 @@ namespace iamai_core_lib {
 			m_iamaiModel = modelName;
 		}
 
-		public AI(string modelName, int ctxSize = 8192, int batchSize = 1, int maxTokens = 512, int threads = 1, int top_k = 1, int top_p, int temperature, uint32_t seed) {
+		public AI(string modelName, int ctxSize = 8192, int batchSize = 1, int maxTokens = 512, int threads = 1, int top_k = 50, float top_p = 0.9f, float temperature = 0.5f, uint32_t seed = 4294967295	) {
 			m_iamaiModel = modelName;
 			m_size = ctxSize;
 			m_iamaiTokens = maxTokens;
