@@ -33,7 +33,7 @@ namespace iamai_core_lib {
 		private delegate IntPtr InitDelegate([MarshalAs(UnmanagedType.LPStr)] string modelPath);
 
 		[UnmanagedFunctionPointer(CallingConvention.Cdecl)]
-		private delegate IntPtr FullInitDelegate([MarshalAs(UnmanagedType.LPStr)] string modelPath, int ctxSize, int maxTokens, int batchSize, int threads, int top_k, float top_p, float temperature, uint32_t seed);
+		private delegate IntPtr FullInitDelegate([MarshalAs(UnmanagedType.LPStr)] string modelPath, int ctxSize, int maxTokens, int batchSize, int threads, int top_k, float top_p, float temperature, uint seed);
 
 		[UnmanagedFunctionPointer(CallingConvention.Cdecl)]
 		private delegate bool GenerateDelegate(IntPtr context, [MarshalAs(UnmanagedType.LPStr)] string prompt,
@@ -94,11 +94,12 @@ namespace iamai_core_lib {
 		int m_iamaiTokens = 512;
 		int m_iamaiBatch = 512;
 		int m_iamaiThreads = 1;
+		int m_whisperThreads = 1;
 		int m_top_K = 50;
 		float m_top_P = 0.9f;
 		float m_Temperature = 0.5f;
 
-		uint32_t m_seed = 4294967295;
+		uint m_seed = 4294967295;
 
 		#region Initialize
 		public AI(string IamaiModel, string WhisperModel) {
@@ -110,7 +111,7 @@ namespace iamai_core_lib {
 			m_iamaiModel = modelName;
 		}
 
-		public AI(string modelName, int ctxSize = 8192, int batchSize = 1, int maxTokens = 512, int threads = 1, int top_k = 50, float top_p = 0.9f, float temperature = 0.5f, uint32_t seed = 4294967295	) {
+		public AI(string modelName, int ctxSize = 8192, int batchSize = 1, int maxTokens = 512, int threads = 1, int top_k = 50, float top_p = 0.9f, float temperature = 0.5f, uint seed = 4294967295	) {
 			m_iamaiModel = modelName;
 			m_size = ctxSize;
 			m_iamaiTokens = maxTokens;
