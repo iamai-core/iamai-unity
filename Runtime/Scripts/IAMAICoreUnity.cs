@@ -14,6 +14,8 @@ namespace iamai_core_lib {
 		private bool disposed = false;
 		private const string IAMAI_DLL_PATH = "iamai-core.dll";
 		private const string Whisper_DLL_PATH = "whisper-interface.dll";
+		private readonly object transcribeLock = new object();
+
 
 		// Win32 API functions
 		[DllImport("kernel32.dll")]
@@ -67,7 +69,7 @@ namespace iamai_core_lib {
 		private delegate void SetTranslateDelegate(IntPtr context, bool translate);
 
 		[UnmanagedFunctionPointer(CallingConvention.Cdecl)]
-		private delegate void TranscribeDelegate(IntPtr context, IntPtr translate, int samples);
+		private delegate IntPtr TranscribeDelegate(IntPtr context, IntPtr translate, int samples);
 		// Function delegates
 		private InitDelegate _init;
 		private FullInitDelegate _fullInit;
@@ -196,8 +198,9 @@ namespace iamai_core_lib {
 					}
 				}
 				if (!string.IsNullOrEmpty(m_whisperModel)) {
-					ctx = _whisperInit(whisperModelPath, m_whisperThreads);
+					whisperCtx = _whisperInit(whisperModelPath, m_whisperThreads);
 				}
+				disposed = false;
 			});
 		}
 
@@ -247,12 +250,36 @@ namespace iamai_core_lib {
 		#endregion
 
 		#region whisper functions 
-			//this region is for Whisper AI/Transcribe audio files
-			//set threads
-			//set language
-			//set translate
-			//transcribe
-			// some way to get audio based on iamaivoiceinput files
+		//this region is for Whisper AI/Transcribe audio files
+		//set threads
+		public void setWhisperThreads(int threads) {
+			_whisperSetThreads(whisperCtx, threads);
+		}
+		//set language
+		public void setWhisperLanguage(string language) {
+			_whisperSetLanguage(whisperCtx, language);
+		}
+		//set translate
+		public void setWhisperTranslate(bool translate) {
+			_whisperSetTranslate(whisperCtx, translate);
+		}
+		//transcribe pcm32 
+		public string WhisperTranscribe(float[] data, int samples) {
+			if (ctx == IntPtr.Zero || data == null || samples <= 0) {
+				Console.Error.WriteLine("Invalid params passed to _transcribe");
+				return "";
+			}
+
+			lock (transcribeLock) {
+				unsafe {
+					fixed (float* dataPtr = data) {
+						IntPtr resultPtr = _whisperTranscribe(whisperCtx, (IntPtr)dataPtr, samples);
+						return resultPtr != IntPtr.Zero ? Marshal.PtrToStringAnsi(resultPtr) : "";
+					}
+				}
+			}
+		}
+		// some way to get audio based on iamaivoiceinput files
 		#endregion
 		protected virtual void Dispose(bool disposing) {
 			if (!disposed) {
@@ -260,9 +287,17 @@ namespace iamai_core_lib {
 					_free(ctx);
 					ctx = IntPtr.Zero;
 				}
+				if (whisperCtx != IntPtr.Zero) {
+					_whisperfree(ctx);
+					whisperCtx = IntPtr.Zero;
+				}
 				if (iamaiDllHandle != IntPtr.Zero) {
 					FreeLibrary(iamaiDllHandle);
 					iamaiDllHandle = IntPtr.Zero;
+				}
+				if (whisperDllHandle != IntPtr.Zero) {
+					FreeLibrary(whisperDllHandle);
+					whisperDllHandle = IntPtr.Zero;
 				}
 				disposed = true;
 			}
