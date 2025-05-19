@@ -184,7 +184,7 @@ namespace iamai_core_lib {
 					_whisperSetThreads = GetDelegate<SetThreadsDelegate>("setThreads", whisperDllHandle);
 					_whisperSetLanguage = GetDelegate<SetLanguageDelegate>("setLanguage", whisperDllHandle);
 					_whisperSetTranslate = GetDelegate<SetTranslateDelegate>("setTranslate", whisperDllHandle);
-					_whisperTranscribe = GetDelegate<TranscribeDelegate>("Transcribe", whisperDllHandle);
+					_whisperTranscribe = GetDelegate<TranscribeDelegate>("Transcrible", whisperDllHandle);
 				}
 				// Initialize the model
 				if (!string.IsNullOrEmpty(m_iamaiModel)) {
