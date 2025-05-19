@@ -16,6 +16,9 @@ https://developer.nvidia.com/cuda-12-6-0-download-archive
 ### 2. Open the Project in Unity
 - Open the root folder of cloned project from the **Unity Hub**.
 
+### 3. Allow unsafe code
+- Open Edit > Project settings > Player > check **Allow 'unsafe' code**.
+
 ### 3. Load the Demo Scene
 - In Unity's **Content Browser**, go to the `Scenes` folder.
 - Select the demo scene you want to load.
