@@ -13,11 +13,14 @@ public class MicrophoneInput : MonoBehaviour {
 
 	public AudioSource audioSource;
 	private bool isRecording = false;
-	private string microphoneName;
+	public string microphoneName;
 
 	
 	void Start() {
-		audioSource = GetComponent<AudioSource>();
+		audioSource = GetComponent<AudioSource>(); 
+		audioSource.spatialBlend = 0f; // 2D (non-spatial)
+		audioSource.panStereo = 0f;
+
 		instance = this;
 		recordingImage.color = StopRecordingColor;
 		if (Microphone.devices.Length > 0) {
@@ -33,7 +36,7 @@ public class MicrophoneInput : MonoBehaviour {
 	public void StartRecording() {
 		if (!isRecording) {
 			// Record for a set amount of time (e.g., 5 seconds)
-			audioSource.clip = Microphone.Start(microphoneName, true, 5, 44100);
+			audioSource.clip = Microphone.Start(microphoneName, false, 5, 16000);
 			audioSource.Play();
 			isRecording = true;
 			recordingImage.color = RecordingColor;
