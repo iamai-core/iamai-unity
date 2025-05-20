@@ -263,10 +263,15 @@ namespace iamai_core_lib {
 		public void setWhisperTranslate(bool translate) {
 			_whisperSetTranslate(whisperCtx, translate);
 		}
+		public async Task<string> WhisperAsyncTranscribe(float[] data, int samples) {
+			return await Task.Run(() => {
+				return WhisperTranscribe(data, samples);
+			});
+		}
 		//transcribe pcm32 
 		public string WhisperTranscribe(float[] data, int samples) {
-			if (ctx == IntPtr.Zero || data == null || samples <= 0) {
-				Console.Error.WriteLine("Invalid params passed to _transcribe");
+			if (whisperCtx == IntPtr.Zero || data == null || samples <= 0) {
+				Debug.LogError("Invalid params passed to _transcribe");
 				return "";
 			}
 
