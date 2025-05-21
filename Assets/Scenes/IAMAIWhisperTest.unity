@@ -247,8 +247,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   recordingImage: {fileID: 302897322}
-  RecordingColor: {r: 0.17135262, g: 1, b: 0, a: 1}
-  StopRecordingColor: {r: 1, g: 0, b: 0, a: 1}
+  RecordingColor: {r: 1, g: 0, b: 0.0026378632, a: 1}
+  StopRecordingColor: {r: 0.99371064, g: 0.99371064, b: 0.99371064, a: 1}
   playOnStart: 0
   audioSource: {fileID: 140330958}
   microphoneName: 

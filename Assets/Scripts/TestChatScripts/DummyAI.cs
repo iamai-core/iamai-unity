@@ -16,10 +16,10 @@ public class DummyAI : MonoBehaviour
 
     private async void Start()
     {
-        ai = new iamai_core_lib.AI(ModelList[0]);
+        ai = new iamai_core_lib.AI(ModelList[0], 4096, 512, 512, 8);
         await ai.Activate();
         DelayedAIResponse(await ai.GenerateAsync(
-            "You are a helpful AI assistant that will send back one response.\n\n Message: " + initialPrompt + "\nResponse: "
+             initialPrompt
             ));
     }
 
@@ -27,7 +27,7 @@ public class DummyAI : MonoBehaviour
     {
 		// Add the AI's response after a delay
 		DelayedAIResponse(await ai.GenerateAsync(
-            "You are a helpful AI assistant that will send back one response.\n\n Message: " + userMessage + "\nResponse: "
+            userMessage
             ));
     }
 

@@ -1323,7 +1323,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   chatController: {fileID: 774972695}
   ModelList:
-  - llama-3.2-1b-instruct-q4_k_m.gguf
+  - Mistral_FYF_7b.Q4_K_M.gguf
   initialPrompt: Hello there!
 --- !u!1 &1183876054
 GameObject:
